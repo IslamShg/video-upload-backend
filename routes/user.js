@@ -22,9 +22,3 @@ router.put('/like/:videoId', verifyToken, likeVideo)
 router.put('/dislike/:videoId', verifyToken, dislikeVideo)
 
 export const userRouter = router
-
-// delete user
-// get user
-// subscribe a user
-// like a video
-// dislike a video
