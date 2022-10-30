@@ -44,7 +44,7 @@ export const deleteUser = async (req, res, next) => {
 
 export const subscribeUser = async (req, res, next) => {
   try {
-    await UserModel.findById(req.user.id, {
+    await UserModel.findByIdAndUpdate(req.user.id, {
       $push: { subscribedUsers: req.params.id }
     })
     await UserModel.findByIdAndUpdate(req.params.id, {
@@ -58,7 +58,7 @@ export const subscribeUser = async (req, res, next) => {
 
 export const unsubscribeUser = async (req, res, next) => {
   try {
-    await UserModel.findById(req.user.id, {
+    await UserModel.findByIdAndUpdate(req.user.id, {
       $pull: { subscribedUsers: req.params.id }
     })
     await UserModel.findByIdAndUpdate(req.params.id, {

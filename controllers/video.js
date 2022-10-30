@@ -1,5 +1,6 @@
 import { createError } from '../error.js'
-import { VideoModel } from '../models/Video'
+import { VideoModel } from '../models/Video.js'
+import { UserModel } from '../models/User.js'
 
 export const addVideo = async (req, res, next) => {
   try {
@@ -55,6 +56,70 @@ export const getVideo = async (req, res, next) => {
   try {
     const video = await VideoModel.findById(req.params.id)
     res.status(200).json(video)
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const addVideoView = async (req, res, next) => {
+  try {
+    await VideoModel.findByIdAndUpdate(req.params.id, {
+      $inc: { views: 1 }
+    })
+    res.status(200).json('Video view has been increased.')
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const getRandomVideos = async (req, res, next) => {
+  try {
+    const videos = await VideoModel.aggregate([{ $sample: { size: 1 } }])
+    res.status(200).json(videos)
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const getTrendingVideos = async (req, res, next) => {
+  try {
+    const videos = await VideoModel.find().sort({ views: -1 })
+    res.status(200).json(videos)
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const getFeedVideos = async (req, res, next) => {
+  try {
+    const user = await UserModel.findById(req.user.id)
+    const subscribedChannels = user?.subscribedUsers
+    const list = await Promise.all(
+      subscribedChannels?.map((channelId) =>
+        VideoModel.find({ userId: channelId })
+      )
+    )
+    res.status(200).json(list.flat().sort((a, b) => b.createdAt - a.createdAt))
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const getByTag = async (req, res, next) => {
+  const tags = req.query.tags?.split(',') ?? []
+
+  try {
+    const videos = await VideoModel.find({ tags: { $in: tags } }).limit(20)
+    res.status(200).json(videos)
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const searchVideos = async (req, res, next) => {
+  try {
+    const videos = await VideoModel.find().sort({ views: -1 })
+    res.status(200).json(videos)
   } catch (error) {
     next(error)
   }
