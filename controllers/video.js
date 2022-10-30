@@ -117,8 +117,11 @@ export const getByTag = async (req, res, next) => {
 }
 
 export const searchVideos = async (req, res, next) => {
+  const query = req.query.q
   try {
-    const videos = await VideoModel.find().sort({ views: -1 })
+    const videos = await VideoModel.find({
+      title: { $regex: query, $options: 'i' }
+    }).limit(40)
     res.status(200).json(videos)
   } catch (error) {
     next(error)
