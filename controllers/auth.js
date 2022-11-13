@@ -22,8 +22,10 @@ export const signUp = async (req, res, next) => {
 }
 
 export const signIn = async (req, res, next) => {
+  const field = req.body.email ? 'email' : 'name'
+  const fieldValue = req.body.email || req.body.name
   try {
-    const user = await UserModel.findOne({ email: req.body.email })
+    const user = await UserModel.findOne({ [field]: [fieldValue] })
     if (!user) {
       return next(createError(404, 'User not found'))
     }
