@@ -24,7 +24,7 @@ app.use('/api/videos', videosRouter)
 app.use('/api/comments', commentRouter)
 app.use('/api/auth', authRouter)
 
-app.use((err, req, res, next) => {
+app.use((err, req, res, next) => {``
   const status = err.status || 500
   const message = err.message || 'Something went wrong'
 

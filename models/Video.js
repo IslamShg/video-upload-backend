@@ -22,6 +22,14 @@ const VideoSchema = new mongoose.Schema(
       type: Number,
       default: 0
     },
+    user: {
+      name: {
+        type: String
+      },
+      img: {
+        type: String
+      }
+    },
     tags: {
       type: [String],
       default: []

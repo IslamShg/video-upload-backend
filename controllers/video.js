@@ -3,8 +3,18 @@ import { VideoModel } from '../models/Video.js'
 import { UserModel } from '../models/User.js'
 
 export const addVideo = async (req, res, next) => {
+  console.log(req.user, 'video.js', 6)
   try {
-    const newVideo = new VideoModel({ userId: req.user.id, ...req.body })
+    const user = await UserModel.findById(req.user.id)
+    const newVideo = new VideoModel({
+      user: {
+        name: user?.name,
+        img: user?.img
+      },
+      nn: null,
+      userId: req.user.id,
+      ...req.body
+    })
     const savedVideo = await newVideo.save()
     res.status(200).json(savedVideo)
   } catch (error) {
@@ -55,7 +65,7 @@ export const deleteVideo = async (req, res, next) => {
 export const getVideo = async (req, res, next) => {
   try {
     const video = await VideoModel.findById(req.params.id)
-    res.status(200).json(video)
+    res.status(200).json({ ...video })
   } catch (error) {
     next(error)
   }
@@ -74,7 +84,7 @@ export const addVideoView = async (req, res, next) => {
 
 export const getRandomVideos = async (req, res, next) => {
   try {
-    const videos = await VideoModel.aggregate([{ $sample: { size: 1 } }])
+    const videos = await VideoModel.aggregate([{ $sample: { size: 10 } }])
     res.status(200).json(videos)
   } catch (error) {
     next(error)
