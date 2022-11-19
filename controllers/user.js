@@ -75,10 +75,19 @@ export const likeVideo = async (req, res, next) => {
   const userId = req.user.id
   const videoId = req.params.videoId
   try {
-    await VideoModel.findByIdAndUpdate(videoId, {
-      $addToSet: { likes: userId },
-      $pull: { dislikes: userId }
-    })
+    const video = await VideoModel.findById(videoId)
+
+    if (video?.likes.includes(userId)) {
+      await VideoModel.findByIdAndUpdate(videoId, {
+        $pull: { likes: userId }
+      })
+    } else {
+      await VideoModel.findByIdAndUpdate(videoId, {
+        $addToSet: { likes: userId },
+        $pull: { dislikes: userId }
+      })
+    }
+
     res.status(200).json('The video has been liked')
   } catch (error) {
     next(error)
@@ -89,10 +98,19 @@ export const dislikeVideo = async (req, res, next) => {
   const userId = req.user.id
   const videoId = req.params.videoId
   try {
-    await VideoModel.findByIdAndUpdate(videoId, {
-      $addToSet: { dislikes: userId },  
-      $pull: { likes: userId }
-    })
+    const video = await VideoModel.findById(videoId)
+
+    if (video?.dislikes.includes(userId)) {
+      await VideoModel.findByIdAndUpdate(videoId, {
+        $pull: { dislikes: userId }
+      })
+    } else {
+      await VideoModel.findByIdAndUpdate(videoId, {
+        $addToSet: { dislikes: userId },
+        $pull: { likes: userId }
+      })
+    }
+
     res.status(200).json('The video has been disliked')
   } catch (error) {
     next(error)

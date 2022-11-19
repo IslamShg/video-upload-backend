@@ -3,13 +3,13 @@ import { VideoModel } from '../models/Video.js'
 import { UserModel } from '../models/User.js'
 
 export const addVideo = async (req, res, next) => {
-  console.log(req.user, 'video.js', 6)
   try {
     const user = await UserModel.findById(req.user.id)
     const newVideo = new VideoModel({
       user: {
         name: user?.name,
-        img: user?.img
+        img: user?.img,
+        subscribers: user?.subscribers
       },
       nn: null,
       userId: req.user.id,
@@ -65,7 +65,7 @@ export const deleteVideo = async (req, res, next) => {
 export const getVideo = async (req, res, next) => {
   try {
     const video = await VideoModel.findById(req.params.id)
-    res.status(200).json({ ...video })
+    res.status(200).json(video)
   } catch (error) {
     next(error)
   }
