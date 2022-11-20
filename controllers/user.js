@@ -23,8 +23,10 @@ export const updateUser = async (req, res, next) => {
 
 export const getUser = async (req, res, next) => {
   try {
-    const user = await UserModel.findById(req.params.id)
-    res.status(200).json(user)
+    const userData = await UserModel.findOne({ _id: req.params.id })
+    const { password, ...data } = userData?._doc
+
+    res.status(200).json(data)
   } catch (error) {
     next(error)
   }

@@ -1,10 +1,19 @@
 import { createError } from '../error.js'
 import { CommentModel } from '../models/Comment.js'
 import { VideoModel } from '../models/Video.js'
+import { UserModel } from '../models/User.js'
 
 export const addComment = async (req, res, next) => {
   try {
-    const comment = new CommentModel({ ...req.body, userId: req.user.id })
+    const user = await UserModel.findById(req.user.id)
+    const comment = new CommentModel({
+      ...req.body,
+      user: {
+        userId: req.user.id,
+        avatarUrl: user?.img,
+        userName: user?.name
+      }
+    })
     const savedComment = await comment.save()
     res.status(200).json(savedComment)
   } catch (error) {
